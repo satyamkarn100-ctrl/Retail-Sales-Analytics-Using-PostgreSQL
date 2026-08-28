@@ -16,3 +16,35 @@ UNION ALL
 SELECT 'order_items', COUNT(*) FROM olist_order_items
 UNION ALL
 SELECT 'reviews', COUNT(*) FROM olist_order_reviews;
+
+
+-- Checking Duplicate 
+SELECT customer_id, COUNT(*) AS count
+FROM olist_customers
+GROUP BY customer_id
+HAVING COUNT(*)>1;
+
+SELECT product_id,COUNT(*) AS count
+FROM olist_products
+GROUP BY product_id
+HAVING COUNT(*)>1;
+
+SELECT seller_id,COUNT(*) AS count
+from olist_sellers
+GROUP BY seller_id
+HAVING COUNT(*)>1;
+
+SELECT order_id,COUNT(*) AS count
+FROM olist_orders
+GROUP BY order_id
+HAVING COUNT(*)>1;
+
+SELECT product_category_name,COUNT(*) AS count
+FROM product_cateogory_name_translation
+GROUP BY product_category_name
+HAVING COUNT(*)>1;
+
+SELECT order_id,payment_sequential,COUNT(*) as count
+FROM olist_order_payments
+GROUP BY order_id,payment_sequential
+HAVING COUNT(*)>1;
