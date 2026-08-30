@@ -155,3 +155,49 @@ WHERE order_id IS NULL;
 SELECT COUNT(*) AS null_geolocation_zip
 FROM olist_geolocation
 WHERE geolocation_zip_code_prefix IS NULL;
+
+
+-- 4. Referential Integrity Validation
+
+
+-- Orders → Customers
+SELECT COUNT(*) AS invalid_customer_id
+FROM olist_orders o
+LEFT JOIN olist_customers c
+    ON o.customer_id = c.customer_id
+WHERE c.customer_id IS NULL;
+
+-- Payments → Orders
+SELECT COUNT(*) AS invalid_payment_order_id
+FROM olist_order_payments p
+LEFT JOIN olist_orders o
+    ON p.order_id = o.order_id
+WHERE o.order_id IS NULL;
+
+-- Order Items → Orders
+SELECT COUNT(*) AS invalid_item_order_id
+FROM olist_order_items i
+LEFT JOIN olist_orders o
+    ON i.order_id = o.order_id
+WHERE o.order_id IS NULL;
+
+-- Order Items → Products
+SELECT COUNT(*) AS invalid_product_id
+FROM olist_order_items i
+LEFT JOIN olist_products p
+    ON i.product_id = p.product_id
+WHERE p.product_id IS NULL;
+
+-- Order Items → Sellers
+SELECT COUNT(*) AS invalid_seller_id
+FROM olist_order_items i
+LEFT JOIN olist_sellers s
+    ON i.seller_id = s.seller_id
+WHERE s.seller_id IS NULL;
+
+-- Reviews → Orders
+SELECT COUNT(*) AS invalid_review_order_id
+FROM olist_order_reviews r
+LEFT JOIN olist_orders o
+    ON r.order_id = o.order_id
+WHERE o.order_id IS NULL;
