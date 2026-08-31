@@ -45,7 +45,7 @@ UNION ALL
 SELECT 'reviews', COUNT(*)
 FROM olist_order_reviews;
 
--- 2.DUPLICATE / PRIMARY KEY VALIDATION
+-- 2.DUPLICATE KEY VALIDATION
 
 -- Customers
 SELECT customer_id, COUNT(*) AS count
