@@ -19,7 +19,7 @@ WHERE payment_value<0;
 -- 4 CHECK INVALID PAYMENT INSTALLMENTS
 SELECT COUNT(*) AS invalid_installments
 FROM olist_order_payments
-WHERE payments_installments <=0
+WHERE payment_installments <=0
 
 -- 5. CHECK INVALID REVIEW SCORE
 SELECT COUNT(*) AS invalid_review_score
