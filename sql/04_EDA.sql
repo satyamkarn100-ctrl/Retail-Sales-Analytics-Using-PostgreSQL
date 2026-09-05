@@ -25,4 +25,28 @@ FROM olist_orders
 GROUP BY order_status
 ORDER BY total_orders DESC;
 
+SELECT
+    order_status,
+    COUNT(*) AS total_orders
+FROM olist_orders
+GROUP BY order_status
+ORDER BY total_orders DESC;
 
+
+
+SELECT 
+	MIN(order_purchase_timestamp) AS first_order_date,
+	MAX(order_purchase_timestamp) AS last_order_date
+
+FROM olist_orders;
+
+SELECT
+	MIN(payment_value) AS min_payment,
+	MAX(payment_value) AS  max_payment,
+	AVG(payment_value) AS avg_payment,
+	SUM(payment_value) AS total_payment
+
+FROM olist_order_payments;
+	
+	
+	
