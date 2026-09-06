@@ -47,6 +47,15 @@ SELECT
 	SUM(payment_value) AS total_payment
 
 FROM olist_order_payments;
+
+
+SELECT 
+	payment_type,
+	COUNT(*) AS  total_payments
+FROM olist_order_payments
+GROUP BY payment_type
+ORDER BY total_payments DESC;
+
 	
 	
 	
