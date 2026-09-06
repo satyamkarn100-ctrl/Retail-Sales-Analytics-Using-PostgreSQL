@@ -20,7 +20,6 @@ SELECT
     COUNT(*) FILTER (WHERE order_estimated_delivery_date IS NULL) AS missing_order_estimated_delivery_date
 FROM olist_orders;
 
-
 -- 3. Analyze missing delivery/approval dates by order status
 -- Helps determine whether missing values are expected
 -- based on the order lifecycle.
@@ -34,6 +33,7 @@ FROM olist_orders
 GROUP BY order_status
 ORDER BY total_orders DESC;
 
+
 -- 4. Check the overall order date range
 -- Similar to:
 -- df['order_purchase_timestamp'].min()
@@ -43,6 +43,7 @@ SELECT
     MAX(order_purchase_timestamp) AS last_order_date
 FROM olist_orders;
 
+
 -- 5. Analyze payment value distribution
 -- Similar to basic numeric aggregation / describe()
 SELECT
@@ -51,6 +52,7 @@ SELECT
     AVG(payment_value) AS avg_payment,
     SUM(payment_value) AS total_payment
 FROM olist_order_payments;
+
 
 -- 6.Analyze payment methods
 -- Similar to: df['payment_type'].value_counts()
@@ -77,5 +79,26 @@ SELECT
 	COUNT(*) FILTER(WHERE shipping_limit_date IS NULL) AS missing_shipping_limit_date,
 	COUNT(*) FILTER(WHERE price IS NULL ) AS missing_price,
 	COUNT(*) FILTER(WHERE freight_value IS NULL ) AS missing_freight_value
+FROM olist_order_items;
+
+-- Check exact/full-row duplicates
+-- Similar to: df.duplicated()
+
+SELECT 
+	order_id,
+	order_item_id,
+	product_id,
+	seller_id,
+	shipping_limit_date,
+	price,
+	freight_value,
+	COUNT(*) AS duplicate_count
+
 FROM olist_order_items
-	
+GROUP BY 
+	order_id,order_item_id,product_id,seller_id,
+	shipping_limit_date,
+	price,
+	freight_value
+
+HAVING COUNT(*)>1;
