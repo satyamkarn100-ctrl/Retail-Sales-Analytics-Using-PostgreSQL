@@ -60,3 +60,22 @@ SELECT
 FROM olist_order_payments
 GROUP BY payment_type
 ORDER BY total_payments DESC;
+
+
+-- 7 Analyze order Items
+-- This is Similar to df.head(10)
+SELECT * 
+FROM olist_order_items
+LIMIT 10;
+
+
+SELECT 
+	COUNT(*) FILTER(WHERE order_id IS NULL) AS missing_orders_id,
+	COUNT(*) FILTER(WHERE order_item_id IS NULL) AS missing_order_item_id,
+	COUNT(*) FILTER(WHERE product_id IS NULL) AS missing_product_id,
+	COUNT(*) FILTER(WHERE seller_id IS NULL) AS missing_seller_id,
+	COUNT(*) FILTER(WHERE shipping_limit_date IS NULL) AS missing_shipping_limit_date,
+	COUNT(*) FILTER(WHERE price IS NULL ) AS missing_price,
+	COUNT(*) FILTER(WHERE freight_value IS NULL ) AS missing_freight_value
+FROM olist_order_items
+	
