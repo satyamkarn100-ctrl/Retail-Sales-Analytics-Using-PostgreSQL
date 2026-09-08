@@ -117,3 +117,29 @@ SELECT
 	AVG(freight_value) AS avg_freight,
 	SUM(freight_value) AS total_freight
 FROM olist_order_items;
+
+
+SELECT 
+	order_id,
+	COUNT(*) AS item_count
+FROM olist_order_items
+GROUP BY order_id
+ORDER BY item_count DESC;
+
+
+SELECT *
+FROM olist_products
+LIMIT 10;
+
+SELECT 
+	COUNT(*) FILTER(WHERE product_id IS NULL) AS missing_product_id,
+	COUNT(*) FILTER(WHERE product_category_name IS NULL) AS missing_product_category_name,
+	COUNT(*) FILTER(WHERE product_name_length IS NULL ) AS missing_product_name_length,
+	COUNT(*) FILTER(WHERE product_description_length IS NULL) AS missing_product_description_length,
+	COUNT(*) FILTER(WHERE product_photos_qty IS NULL) AS missing_product_photos_qty,
+	COUNT(*) FILTER(WHERE product_weight_g IS NULL) AS missing_product_weight_g,
+	COUNT(*) FILTER(WHERE product_length_cm IS NULL) AS missing_product_length_cm,
+	COUNT(*) FILTER(WHERE product_width_cm IS NULL) AS missing_product_width_cm,
+	COUNT(*) FILTER(WHERE product_width_cm IS NULL) AS missing_width_cm
+FROM olist_products;
+
