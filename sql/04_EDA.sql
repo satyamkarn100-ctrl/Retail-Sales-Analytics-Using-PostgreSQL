@@ -102,3 +102,18 @@ GROUP BY
 	freight_value
 
 HAVING COUNT(*)>1;
+
+
+SELECT 
+	MIN(price) AS min_price,
+	MAX(price) AS max_price,
+	AVG(price) AS avg_price,
+	SUM(price) AS total_price
+FROM olist_order_items;
+
+SELECT
+	MIN(freight_value) AS min_freight,
+	MAX(freight_value) AS max_freight,
+	AVG(freight_value) AS avg_freight,
+	SUM(freight_value) AS total_freight
+FROM olist_order_items;
