@@ -153,5 +153,12 @@ GROUP BY
 		product_id,product_category_name,product_name_length,
 	product_description_length,product_photos_qty,
 	product_weight_g,product_length_cm,product_width_cm
-
+l
 HAVING COUNT(*)>1;
+
+SELECT 
+	product_category_name,
+	COUNT(*) AS product_count
+FROM olist_products
+GROUP BY product_category_name
+ORDER BY product_count DESC;
