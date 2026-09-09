@@ -139,7 +139,19 @@ SELECT
 	COUNT(*) FILTER(WHERE product_photos_qty IS NULL) AS missing_product_photos_qty,
 	COUNT(*) FILTER(WHERE product_weight_g IS NULL) AS missing_product_weight_g,
 	COUNT(*) FILTER(WHERE product_length_cm IS NULL) AS missing_product_length_cm,
-	COUNT(*) FILTER(WHERE product_width_cm IS NULL) AS missing_product_width_cm,
-	COUNT(*) FILTER(WHERE product_width_cm IS NULL) AS missing_width_cm
+	COUNT(*) FILTER(WHERE product_width_cm IS NULL) AS missing_product_width_cm
 FROM olist_products;
 
+
+SELECT 
+	product_id,product_category_name,product_name_length,
+	product_description_length,product_photos_qty,
+	product_weight_g,product_length_cm,product_width_cm,
+	COUNT(*) AS duplicate_count
+FROM olist_products
+GROUP BY 
+		product_id,product_category_name,product_name_length,
+	product_description_length,product_photos_qty,
+	product_weight_g,product_length_cm,product_width_cm
+
+HAVING COUNT(*)>1;
