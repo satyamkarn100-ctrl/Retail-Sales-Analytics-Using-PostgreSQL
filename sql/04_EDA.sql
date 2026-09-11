@@ -223,3 +223,20 @@ SELECT
     MAX(product_name_length) AS max_name_length,
     AVG(product_name_length) AS avg_name_length
 FROM olist_products;
+
+
+
+-- Analyze customers
+-- Preview sample customers
+SELECT *
+from olist_customers
+LIMIT 10;
+
+SELECT 
+	COUNT(*) FILTER(WHERE customer_id IS NULL) AS missing_customer_id,
+	COUNT(*) FILTER(WHERE customer_unique_id IS NULL) AS missing_customer_unique_id,
+	COUNT(*) FILTER(WHERE customer_zip_code_prefix IS NULL) AS missing_customer_city,
+	COUNT(*) FILTER(WHERE customer_city IS NULL) AS missing_customer_city,
+	COUNT(*) FILTER(WHERE customer_state IS NULL) AS missing_customer_state
+FROM olist_customers;
+	
