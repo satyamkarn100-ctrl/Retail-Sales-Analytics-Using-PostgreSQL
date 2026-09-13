@@ -239,4 +239,28 @@ SELECT
     COUNT(*) FILTER (WHERE customer_city IS NULL) AS missing_customer_city,
     COUNT(*) FILTER (WHERE customer_state IS NULL) AS missing_customer_state
 FROM olist_customers;
-	
+
+-- 10. Analyze sellers
+
+-- Preview sample sellers
+SELECT *
+FROM olist_sellers
+LIMIT 10;
+
+-- Check missing values in seller data
+SELECT
+    COUNT(*) FILTER (WHERE seller_id IS NULL) AS missing_seller_id,
+    COUNT(*) FILTER (WHERE seller_zip_code_prefix IS NULL) AS missing_seller_zip_code,
+    COUNT(*) FILTER (WHERE seller_city IS NULL) AS missing_seller_city,
+    COUNT(*) FILTER (WHERE seller_state IS NULL) AS missing_seller_state
+FROM olist_sellers;
+
+-- Analyze sellers by state
+SELECT
+    seller_state,
+    COUNT(*) AS seller_count
+FROM olist_sellers
+GROUP BY seller_state
+ORDER BY seller_count DESC;
+
+
