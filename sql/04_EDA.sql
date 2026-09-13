@@ -232,11 +232,11 @@ SELECT *
 from olist_customers
 LIMIT 10;
 
-SELECT 
-	COUNT(*) FILTER(WHERE customer_id IS NULL) AS missing_customer_id,
-	COUNT(*) FILTER(WHERE customer_unique_id IS NULL) AS missing_customer_unique_id,
-	COUNT(*) FILTER(WHERE customer_zip_code_prefix IS NULL) AS missing_customer_city,
-	COUNT(*) FILTER(WHERE customer_city IS NULL) AS missing_customer_city,
-	COUNT(*) FILTER(WHERE customer_state IS NULL) AS missing_customer_state
+SELECT
+    COUNT(*) FILTER (WHERE customer_id IS NULL) AS missing_customer_id,
+    COUNT(*) FILTER (WHERE customer_unique_id IS NULL) AS missing_customer_unique_id,
+    COUNT(*) FILTER (WHERE customer_zip_code_prefix IS NULL) AS missing_customer_zip_code,
+    COUNT(*) FILTER (WHERE customer_city IS NULL) AS missing_customer_city,
+    COUNT(*) FILTER (WHERE customer_state IS NULL) AS missing_customer_state
 FROM olist_customers;
 	
