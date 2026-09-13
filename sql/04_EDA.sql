@@ -226,7 +226,7 @@ FROM olist_products;
 
 
 
--- Analyze customers
+-- 9 Analyze customers
 -- Preview sample customers
 SELECT *
 from olist_customers
@@ -239,6 +239,14 @@ SELECT
     COUNT(*) FILTER (WHERE customer_city IS NULL) AS missing_customer_city,
     COUNT(*) FILTER (WHERE customer_state IS NULL) AS missing_customer_state
 FROM olist_customers;
+
+-- Check duplicate customer IDs
+SELECT
+    customer_id,
+    COUNT(*) AS duplicate_count
+FROM olist_customers
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
 
 -- 10. Analyze sellers
 
@@ -262,5 +270,170 @@ SELECT
 FROM olist_sellers
 GROUP BY seller_state
 ORDER BY seller_count DESC;
+
+-- 11. Analyze product category translation
+
+-- Preview sample category translations
+SELECT *
+FROM product_category_name_translation;
+LIMIT 10;
+
+-- Check missing values in category translation
+SELECT
+    COUNT(*) FILTER (WHERE product_category_name IS NULL) AS missing_product_cat_name,
+    COUNT(*) FILTER (WHERE product_category_name_english IS NULL) AS missing_product_category_name_english
+FROM product_category_name_translation;
+
+-- Analyze translated product categories
+SELECT 
+	product_category_name_english,
+	COUNT(*) AS category_count
+FROM product_category_name_translation
+GROUP BY product_category_name_english
+ORDER BY category_count DESC;
+
+
+-- 12. Analyze order status
+-- Similar to: df['order_status'].value_counts()
+
+SELECT
+    order_status,
+    COUNT(*) AS order_count
+FROM olist_orders
+GROUP BY order_status
+ORDER BY order_count DESC;
+
+
+-- 13. Analyze payment data
+
+-- Preview sample payments
+SELECT *
+FROM olist_order_payments
+LIMIT 10;
+
+-- Check missing values in payment data
+SELECT
+    COUNT(*) FILTER (WHERE order_id IS NULL) AS missing_order_id,
+    COUNT(*) FILTER (WHERE payment_sequential IS NULL) AS missing_payment_sequential,
+    COUNT(*) FILTER (WHERE payment_type IS NULL) AS missing_payment_type,
+    COUNT(*) FILTER (WHERE payment_installments IS NULL) AS missing_payment_installments,
+    COUNT(*) FILTER (WHERE payment_value IS NULL) AS missing_payment_value
+FROM olist_order_payments;
+
+-- Check duplicate payment records
+SELECT
+    order_id,
+    payment_sequential,
+    COUNT(*) AS duplicate_count
+FROM olist_order_payments
+GROUP BY
+    order_id,
+    payment_sequential
+HAVING COUNT(*) > 1;
+
+-- Analyze payment installments
+SELECT
+    MIN(payment_installments) AS min_installments,
+    MAX(payment_installments) AS max_installments,
+    AVG(payment_installments) AS avg_installments
+FROM olist_order_payments;
+
+-- Analyze payment value by payment type
+SELECT
+    payment_type,
+    COUNT(*) AS payment_count,
+    SUM(payment_value) AS total_payment_value,
+    AVG(payment_value) AS avg_payment_value
+FROM olist_order_payments
+GROUP BY payment_type
+ORDER BY total_payment_value DESC;
+
+
+-- 14. Analyze order reviews
+
+-- Preview sample reviews
+SELECT *
+FROM olist_order_reviews
+LIMIT 10;
+
+-- Check missing values in review data
+SELECT
+    COUNT(*) FILTER (WHERE review_id IS NULL) AS missing_review_id,
+    COUNT(*) FILTER (WHERE order_id IS NULL) AS missing_order_id,
+    COUNT(*) FILTER (WHERE review_score IS NULL) AS missing_review_score,
+    COUNT(*) FILTER (WHERE review_comment_title IS NULL) AS missing_review_title,
+    COUNT(*) FILTER (WHERE review_comment_message IS NULL) AS missing_review_message,
+    COUNT(*) FILTER (WHERE review_creation_date IS NULL) AS missing_creation_date,
+    COUNT(*) FILTER (WHERE review_answer_timestamp IS NULL) AS missing_answer_timestamp
+FROM olist_order_reviews;
+
+-- Check duplicate review IDs
+SELECT
+    review_id,
+    COUNT(*) AS duplicate_count
+FROM olist_order_reviews
+GROUP BY review_id
+HAVING COUNT(*) > 1
+ORDER BY duplicate_count DESC;
+
+-- Analyze review score distribution
+-- Similar to: df['review_score'].value_counts()
+
+SELECT
+    review_score,
+    COUNT(*) AS review_count
+FROM olist_order_reviews
+GROUP BY review_score
+ORDER BY review_score DESC;
+
+-- Analyze average review score
+SELECT
+    MIN(review_score) AS min_review_score,
+    MAX(review_score) AS max_review_score,
+    AVG(review_score) AS avg_review_score
+FROM olist_order_reviews;
+
+
+-- 15. Analyze geolocation data
+
+-- Preview sample geolocation records
+SELECT *
+FROM olist_geolocation
+LIMIT 10;
+
+-- Check missing values in geolocation data
+SELECT
+    COUNT(*) FILTER (WHERE geolocation_zip_code_prefix IS NULL) AS missing_zip_code,
+    COUNT(*) FILTER (WHERE geolocation_lat IS NULL) AS missing_latitude,
+    COUNT(*) FILTER (WHERE geolocation_lng IS NULL) AS missing_longitude,
+    COUNT(*) FILTER (WHERE geolocation_city IS NULL) AS missing_city,
+    COUNT(*) FILTER (WHERE geolocation_state IS NULL) AS missing_state
+FROM olist_geolocation;
+
+-- Analyze latitude range
+SELECT
+    MIN(geolocation_lat) AS min_latitude,
+    MAX(geolocation_lat) AS max_latitude,
+    AVG(geolocation_lat) AS avg_latitude
+FROM olist_geolocation;
+
+-- Analyze longitude range
+SELECT
+    MIN(geolocation_lng) AS min_longitude,
+    MAX(geolocation_lng) AS max_longitude,
+    AVG(geolocation_lng) AS avg_longitude
+FROM olist_geolocation;
+
+-- Analyze geolocation records by state
+SELECT
+    geolocation_state,
+    COUNT(*) AS location_count
+FROM olist_geolocation
+GROUP BY geolocation_state
+ORDER BY location_count DESC;
+
+
+
+
 
 
