@@ -184,33 +184,13 @@ SELECT
     COUNT(*) FILTER (WHERE product_width_cm IS NULL) AS missing_product_width_cm
 FROM olist_products;
 
-
--- Check exact duplicate product rows
-
+-- Check duplicate product IDs
 SELECT
     product_id,
-    product_category_name,
-    product_name_length,
-    product_description_length,
-    product_photos_qty,
-    product_weight_g,
-    product_length_cm,
-    product_height_cm,
-    product_width_cm,
     COUNT(*) AS duplicate_count
 FROM olist_products
-GROUP BY
-    product_id,
-    product_category_name,
-    product_name_length,
-    product_description_length,
-    product_photos_qty,
-    product_weight_g,
-    product_length_cm,
-    product_height_cm,
-    product_width_cm
+GROUP BY product_id
 HAVING COUNT(*) > 1;
-
 
 -- Analyze product categories
 -- Similar to: df['product_category_name'].value_counts()
@@ -282,13 +262,6 @@ GROUP BY seller_id
 HAVING COUNT(*)>1;
 
 SELECT 
-	seller_state,
-	COUNT(*) AS seller_count
-FROM olist_sellers
-GROUP BY seller_state
-ORDER BY seller_count DESC;
-
-SELECT 
 	seller_city,
 	COUNT(*) AS seller_count
 FROM olist_sellers
@@ -308,7 +281,7 @@ ORDER BY seller_count DESC;
 
 -- Preview sample category translations
 SELECT *
-FROM product_category_name_translation;
+FROM product_category_name_translation
 LIMIT 10;
 
 -- Check missing values in category translation
@@ -316,6 +289,24 @@ SELECT
     COUNT(*) FILTER (WHERE product_category_name IS NULL) AS missing_product_cat_name,
     COUNT(*) FILTER (WHERE product_category_name_english IS NULL) AS missing_product_category_name_english
 FROM product_category_name_translation;
+
+-- Check duplicate category translations
+SELECT 
+	product_category_name,
+	COUNT(*) AS duplicate_count
+FROM product_category_name_translation
+GROUP BY product_category_name
+HAVING COUNT(*)>1;
+
+SELECT 
+	product_category_name_english,
+	COUNT(*) AS duplicate_count
+FROM product_category_name_translation
+GROUP BY product_category_name_english
+HAVING COUNT(*)>1;
+
+
+
 
 -- Analyze translated product categories
 SELECT 
