@@ -24,6 +24,14 @@ SELECT
     COUNT(*) FILTER (WHERE order_estimated_delivery_date IS NULL) AS missing_order_estimated_delivery_date
 FROM olist_orders;
 
+-- Check duplicate order IDs
+SELECT
+	order_id,
+	COUNT(*) AS duplicate_count
+FROM  olist_orders
+GROUP BY order_id
+HAVING COUNT(*)>1;
+
 
 -- 3. Analyze missing delivery and approval dates by order status
 -- Helps understand whether missing values are expected
@@ -263,6 +271,31 @@ SELECT
     COUNT(*) FILTER (WHERE seller_state IS NULL) AS missing_seller_state
 FROM olist_sellers;
 
+-- Checl Duplcate sellers IDs
+
+
+SELECT 
+	seller_id,
+	COUNT(*) AS duplicate_count
+FROM olist_sellers
+GROUP BY seller_id
+HAVING COUNT(*)>1;
+
+SELECT 
+	seller_state,
+	COUNT(*) AS seller_count
+FROM olist_sellers
+GROUP BY seller_state
+ORDER BY seller_count DESC;
+
+SELECT 
+	seller_city,
+	COUNT(*) AS seller_count
+FROM olist_sellers
+GROUP BY seller_city
+ORDER BY seller_count DESC
+LIMIT 20;
+
 -- Analyze sellers by state
 SELECT
     seller_state,
@@ -431,7 +464,6 @@ SELECT
 FROM olist_geolocation
 GROUP BY geolocation_state
 ORDER BY location_count DESC;
-
 
 
 
