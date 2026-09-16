@@ -65,23 +65,12 @@ FROM olist_orders;
 SELECT
     MIN(payment_value) AS min_payment,
     MAX(payment_value) AS max_payment,
-    AVG(payment_value) AS avg_payment,
+    ROUND(AVG(payment_value), 2) AS avg_payment,
     SUM(payment_value) AS total_payment
 FROM olist_order_payments;
 
 
--- 6. Analyze payment methods
--- Similar to: df['payment_type'].value_counts()
-
-SELECT
-    payment_type,
-    COUNT(*) AS total_payments
-FROM olist_order_payments
-GROUP BY payment_type
-ORDER BY total_payments DESC;
-
-
--- 7. Analyze order items
+-- 6. Analyze order items
 
 -- Preview sample order items
 -- Similar to: df.head(10)
@@ -134,7 +123,7 @@ HAVING COUNT(*) > 1;
 SELECT
     MIN(price) AS min_price,
     MAX(price) AS max_price,
-    AVG(price) AS avg_price,
+    ROUND(AVG(price), 2) AS avg_price,
     SUM(price) AS total_price
 FROM olist_order_items;
 
@@ -144,23 +133,29 @@ FROM olist_order_items;
 SELECT
     MIN(freight_value) AS min_freight,
     MAX(freight_value) AS max_freight,
-    AVG(freight_value) AS avg_freight,
+    ROUND(AVG(freight_value), 2) AS avg_freight,
     SUM(freight_value) AS total_freight
 FROM olist_order_items;
 
 
--- Count items in each order
--- Similar to grouping by order_id and counting rows
+-- Count items in each order — shown as a distribution, not a raw per-order dump
+-- (raw per-order list is ~99k rows, not usable as an EDA summary)
+-- also tells you whether market-basket analysis makes sense on this dataset
+-- (olist orders are mostly single-item, this query proves it either way)
 
 SELECT
-    order_id,
-    COUNT(*) AS item_count
-FROM olist_order_items
-GROUP BY order_id
-ORDER BY item_count DESC;
+    item_count,
+    COUNT(*) AS num_orders
+FROM (
+    SELECT order_id, COUNT(*) AS item_count
+    FROM olist_order_items
+    GROUP BY order_id
+) sub
+GROUP BY item_count
+ORDER BY item_count;
 
 
--- 8. Analyze products
+-- 7. Analyze products
 
 -- Preview sample products
 -- Similar to: df.head(10)
@@ -209,15 +204,26 @@ ORDER BY product_count DESC;
 SELECT
     MIN(product_name_length) AS min_name_length,
     MAX(product_name_length) AS max_name_length,
-    AVG(product_name_length) AS avg_name_length
+    ROUND(AVG(product_name_length), 1) AS avg_name_length
 FROM olist_products;
 
 
+-- Analyze product weight and dimensions
+-- Similar to: df[['product_weight_g','product_length_cm','product_height_cm','product_width_cm']].mean()
 
--- 9 Analyze customers
+SELECT
+    ROUND(AVG(product_weight_g), 1) AS avg_weight_g,
+    ROUND(AVG(product_length_cm), 1) AS avg_length_cm,
+    ROUND(AVG(product_height_cm), 1) AS avg_height_cm,
+    ROUND(AVG(product_width_cm), 1) AS avg_width_cm
+FROM olist_products;
+
+
+-- 8. Analyze customers
+
 -- Preview sample customers
 SELECT *
-from olist_customers
+FROM olist_customers
 LIMIT 10;
 
 SELECT
@@ -236,7 +242,18 @@ FROM olist_customers
 GROUP BY customer_id
 HAVING COUNT(*) > 1;
 
--- 10. Analyze sellers
+-- Analyze customers by state
+-- Similar to: df['customer_state'].value_counts()
+
+SELECT
+    customer_state,
+    COUNT(*) AS customer_count
+FROM olist_customers
+GROUP BY customer_state
+ORDER BY customer_count DESC;
+
+
+-- 9. Analyze sellers
 
 -- Preview sample sellers
 SELECT *
@@ -251,17 +268,15 @@ SELECT
     COUNT(*) FILTER (WHERE seller_state IS NULL) AS missing_seller_state
 FROM olist_sellers;
 
--- Checl Duplcate sellers IDs
-
-
-SELECT 
+-- Check duplicate seller IDs
+SELECT
 	seller_id,
 	COUNT(*) AS duplicate_count
 FROM olist_sellers
 GROUP BY seller_id
 HAVING COUNT(*)>1;
 
-SELECT 
+SELECT
 	seller_city,
 	COUNT(*) AS seller_count
 FROM olist_sellers
@@ -277,7 +292,7 @@ FROM olist_sellers
 GROUP BY seller_state
 ORDER BY seller_count DESC;
 
--- 11. Analyze product category translation
+-- 10. Analyze product category translation
 
 -- Preview sample category translations
 SELECT *
@@ -291,14 +306,14 @@ SELECT
 FROM product_category_name_translation;
 
 -- Check duplicate category translations
-SELECT 
+SELECT
 	product_category_name,
 	COUNT(*) AS duplicate_count
 FROM product_category_name_translation
 GROUP BY product_category_name
 HAVING COUNT(*)>1;
 
-SELECT 
+SELECT
 	product_category_name_english,
 	COUNT(*) AS duplicate_count
 FROM product_category_name_translation
@@ -306,18 +321,7 @@ GROUP BY product_category_name_english
 HAVING COUNT(*)>1;
 
 
-
-
--- Analyze translated product categories
-SELECT 
-	product_category_name_english,
-	COUNT(*) AS category_count
-FROM product_category_name_translation
-GROUP BY product_category_name_english
-ORDER BY category_count DESC;
-
-
--- 12. Analyze order status
+-- 11. Analyze order status
 -- Similar to: df['order_status'].value_counts()
 
 SELECT
@@ -328,7 +332,7 @@ GROUP BY order_status
 ORDER BY order_count DESC;
 
 
--- 13. Analyze payment data
+-- 12. Analyze payment data
 
 -- Preview sample payments
 SELECT *
@@ -359,21 +363,23 @@ HAVING COUNT(*) > 1;
 SELECT
     MIN(payment_installments) AS min_installments,
     MAX(payment_installments) AS max_installments,
-    AVG(payment_installments) AS avg_installments
+    ROUND(AVG(payment_installments), 1) AS avg_installments
 FROM olist_order_payments;
 
 -- Analyze payment value by payment type
+-- Similar to: df.groupby('payment_type')['payment_value'].agg(['count','sum','mean'])
+
 SELECT
     payment_type,
     COUNT(*) AS payment_count,
     SUM(payment_value) AS total_payment_value,
-    AVG(payment_value) AS avg_payment_value
+    ROUND(AVG(payment_value), 2) AS avg_payment_value
 FROM olist_order_payments
 GROUP BY payment_type
 ORDER BY total_payment_value DESC;
 
 
--- 14. Analyze order reviews
+-- 13. Analyze order reviews
 
 -- Preview sample reviews
 SELECT *
@@ -392,6 +398,8 @@ SELECT
 FROM olist_order_reviews;
 
 -- Check duplicate review IDs
+-- (this one matters — review_id has no PK constraint in the schema, unlike
+-- the other duplicate checks above which are already PK-enforced)
 SELECT
     review_id,
     COUNT(*) AS duplicate_count
@@ -414,11 +422,11 @@ ORDER BY review_score DESC;
 SELECT
     MIN(review_score) AS min_review_score,
     MAX(review_score) AS max_review_score,
-    AVG(review_score) AS avg_review_score
+    ROUND(AVG(review_score), 2) AS avg_review_score
 FROM olist_order_reviews;
 
 
--- 15. Analyze geolocation data
+-- 14. Analyze geolocation data
 
 -- Preview sample geolocation records
 SELECT *
@@ -438,15 +446,24 @@ FROM olist_geolocation;
 SELECT
     MIN(geolocation_lat) AS min_latitude,
     MAX(geolocation_lat) AS max_latitude,
-    AVG(geolocation_lat) AS avg_latitude
+    ROUND(AVG(geolocation_lat), 4) AS avg_latitude
 FROM olist_geolocation;
 
 -- Analyze longitude range
 SELECT
     MIN(geolocation_lng) AS min_longitude,
     MAX(geolocation_lng) AS max_longitude,
-    AVG(geolocation_lng) AS avg_longitude
+    ROUND(AVG(geolocation_lng), 4) AS avg_longitude
 FROM olist_geolocation;
+
+-- Check for out-of-bounds coordinates
+-- Brazil's real lat/lng range is roughly lat -34 to 6, lng -74 to -33 —
+-- olist's geolocation table is known to have some bad points outside this box
+SELECT
+    COUNT(*) AS outlier_coords
+FROM olist_geolocation
+WHERE geolocation_lat NOT BETWEEN -34 AND 6
+   OR geolocation_lng NOT BETWEEN -74 AND -33;
 
 -- Analyze geolocation records by state
 SELECT
@@ -455,8 +472,3 @@ SELECT
 FROM olist_geolocation
 GROUP BY geolocation_state
 ORDER BY location_count DESC;
-
-
-
-
-
