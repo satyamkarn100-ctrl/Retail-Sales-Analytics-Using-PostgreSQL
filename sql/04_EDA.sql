@@ -2,7 +2,11 @@
 -- Exploratory Data Analysis
 
 
--- 1. Preview sample orders
+-- ============================================================
+-- 1. ORDERS (olist_orders)
+-- ============================================================
+
+-- Preview sample orders
 -- Similar to: df.head(10)
 
 SELECT *
@@ -10,7 +14,7 @@ FROM olist_orders
 LIMIT 10;
 
 
--- 2. Check overall missing values in order data
+-- Check overall missing values in order data
 -- Similar to: df.isna().sum()
 
 SELECT
@@ -33,7 +37,7 @@ GROUP BY order_id
 HAVING COUNT(*)>1;
 
 
--- 3. Analyze missing delivery and approval dates by order status
+-- Analyze missing delivery and approval dates by order status
 -- Helps understand whether missing values are expected
 -- based on the order lifecycle.
 
@@ -48,7 +52,7 @@ GROUP BY order_status
 ORDER BY total_orders DESC;
 
 
--- 4. Check the overall order date range
+-- Check the overall order date range
 -- Similar to:
 -- df['order_purchase_timestamp'].min()
 -- df['order_purchase_timestamp'].max()
@@ -59,18 +63,20 @@ SELECT
 FROM olist_orders;
 
 
--- 5. Analyze payment value
--- Similar to basic numeric aggregation / describe()
+-- Analyze order status
+-- Similar to: df['order_status'].value_counts()
 
 SELECT
-    MIN(payment_value) AS min_payment,
-    MAX(payment_value) AS max_payment,
-    ROUND(AVG(payment_value), 2) AS avg_payment,
-    SUM(payment_value) AS total_payment
-FROM olist_order_payments;
+    order_status,
+    COUNT(*) AS order_count
+FROM olist_orders
+GROUP BY order_status
+ORDER BY order_count DESC;
 
 
--- 6. Analyze order items
+-- ============================================================
+-- 2. ORDER ITEMS (olist_order_items)
+-- ============================================================
 
 -- Preview sample order items
 -- Similar to: df.head(10)
@@ -155,7 +161,9 @@ GROUP BY item_count
 ORDER BY item_count;
 
 
--- 7. Analyze products
+-- ============================================================
+-- 3. PRODUCTS (olist_products)
+-- ============================================================
 
 -- Preview sample products
 -- Similar to: df.head(10)
@@ -219,7 +227,9 @@ SELECT
 FROM olist_products;
 
 
--- 8. Analyze customers
+-- ============================================================
+-- 4. CUSTOMERS (olist_customers)
+-- ============================================================
 
 -- Preview sample customers
 SELECT *
@@ -253,7 +263,9 @@ GROUP BY customer_state
 ORDER BY customer_count DESC;
 
 
--- 9. Analyze sellers
+-- ============================================================
+-- 5. SELLERS (olist_sellers)
+-- ============================================================
 
 -- Preview sample sellers
 SELECT *
@@ -276,6 +288,7 @@ FROM olist_sellers
 GROUP BY seller_id
 HAVING COUNT(*)>1;
 
+-- Analyze sellers by city
 SELECT
 	seller_city,
 	COUNT(*) AS seller_count
@@ -292,7 +305,10 @@ FROM olist_sellers
 GROUP BY seller_state
 ORDER BY seller_count DESC;
 
--- 10. Analyze product category translation
+
+-- ============================================================
+-- 6. PRODUCT CATEGORY TRANSLATION (product_category_name_translation)
+-- ============================================================
 
 -- Preview sample category translations
 SELECT *
@@ -321,18 +337,9 @@ GROUP BY product_category_name_english
 HAVING COUNT(*)>1;
 
 
--- 11. Analyze order status
--- Similar to: df['order_status'].value_counts()
-
-SELECT
-    order_status,
-    COUNT(*) AS order_count
-FROM olist_orders
-GROUP BY order_status
-ORDER BY order_count DESC;
-
-
--- 12. Analyze payment data
+-- ============================================================
+-- 7. PAYMENTS (olist_order_payments)
+-- ============================================================
 
 -- Preview sample payments
 SELECT *
@@ -359,6 +366,16 @@ GROUP BY
     payment_sequential
 HAVING COUNT(*) > 1;
 
+-- Analyze payment value
+-- Similar to basic numeric aggregation / describe()
+
+SELECT
+    MIN(payment_value) AS min_payment,
+    MAX(payment_value) AS max_payment,
+    ROUND(AVG(payment_value), 2) AS avg_payment,
+    SUM(payment_value) AS total_payment
+FROM olist_order_payments;
+
 -- Analyze payment installments
 SELECT
     MIN(payment_installments) AS min_installments,
@@ -379,7 +396,9 @@ GROUP BY payment_type
 ORDER BY total_payment_value DESC;
 
 
--- 13. Analyze order reviews
+-- ============================================================
+-- 8. ORDER REVIEWS (olist_order_reviews)
+-- ============================================================
 
 -- Preview sample reviews
 SELECT *
@@ -426,7 +445,9 @@ SELECT
 FROM olist_order_reviews;
 
 
--- 14. Analyze geolocation data
+-- ============================================================
+-- 9. GEOLOCATION (olist_geolocation)
+-- ============================================================
 
 -- Preview sample geolocation records
 SELECT *
