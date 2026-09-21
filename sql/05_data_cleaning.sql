@@ -41,6 +41,18 @@ SELECT *
 FROM public.sellers_clean
 LIMIT 10;
 
--- 3
+-- 3 Order status
+
+SELECT *
+FROM olist_orders
+LIMIT 10;
 
 
+SELECT order_id,order_status,order_purchase_timestamp,
+	order_approved_at,order_delivered_carrier_date,order_delivered_customer_date,
+	order_estimated_delivery_date
+FROM olist_orders
+WHERE order_status = 'delivered'
+	AND order_approved_at IS NULL;
+
+DROP TABLE IF EXISTS orders_clean;
