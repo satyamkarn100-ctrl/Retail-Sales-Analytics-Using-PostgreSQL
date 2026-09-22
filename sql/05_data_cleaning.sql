@@ -47,12 +47,47 @@ SELECT *
 FROM olist_orders
 LIMIT 10;
 
-
-SELECT order_id,order_status,order_purchase_timestamp,
-	order_approved_at,order_delivered_carrier_date,order_delivered_customer_date,
-	order_estimated_delivery_date
+SELECT *
 FROM olist_orders
 WHERE order_status = 'delivered'
-	AND order_approved_at IS NULL;
+	AND (
+		order_approved_at IS NULL
+		OR order_delivered_carrier_date IS NULL
+		OR order_delivered_customer_date IS NULL
+	);
+
 
 DROP TABLE IF EXISTS orders_clean;
+CREATE TABLE orders_clean AS
+SELECT
+	TRIM(order_id) AS order_id,
+	TRIM(customer_id) AS customer_id,
+	LOWER(TRIM(order_status)) AS order_status,
+	order_purchase_timestamp,
+	order_approved_at,
+	order_delivered_carrier_date,
+	order_delivered_customer_date,
+	order_estimated_delivery_date
+FROM olist_orders;
+
+
+SELECT *
+FROM olist_order_items
+LIMIT 10;
+
+
+CREATE TABLE order_items_clean AS
+SELECT 
+	TRIM(order_id) AS order_id,
+	order_item_id,
+	TRIM(product_id) AS product_id,
+	TRIM(seller_id) AS seller_id,
+	shipping_limit_date,price,freight_value
+FROM olist_order_items;
+
+
+	
+
+
+
+
