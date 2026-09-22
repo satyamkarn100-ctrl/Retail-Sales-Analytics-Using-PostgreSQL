@@ -40,17 +40,11 @@ HAVING COUNT(*)>1;
 -- Analyze missing delivery and approval dates by order status
 -- Helps understand whether missing values are expected
 -- based on the order lifecycle.
-
-SELECT *
-FROM olist_orders
-LIMIT 10;
-
 SELECT
     order_status,
     COUNT(*) AS total_orders,
 	COUNT(*) FILTER(WHERE order_id IS NULL) AS missing_order_id,
 	COUNT(*) FILTER(WHERE customer_id IS NULL) AS missing_customer_id,
-	COUNT(*) FILTER(WHERE order_status IS NULL) AS missing_order_status,
 	COUNT(*) FILTER(WHERE order_purchase_timestamp IS NULL) AS mising_order_purchase_timestamp,
     COUNT(*) FILTER (WHERE order_approved_at IS NULL) AS missing_approved,
     COUNT(*) FILTER (WHERE order_delivered_carrier_date IS NULL) AS missing_carrier,
