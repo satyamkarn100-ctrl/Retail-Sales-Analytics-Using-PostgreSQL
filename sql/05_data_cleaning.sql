@@ -86,8 +86,38 @@ SELECT
 FROM olist_order_items;
 
 
-	
+SELECT * 
+FROM olist_products
+LIMIT 10;
 
 
+DROP TABLE IF EXISTS olist_products_clean;
+
+CREATE TABLE olist_products_clean AS
+SELECT
+    TRIM(product_id) AS product_id,
+    LOWER(TRIM(product_category_name)) AS product_category_name,
+    product_name_lenght,
+    product_description_lenght,
+    product_photos_qty,
+    product_weight_g,
+    product_length_cm,
+    product_height_cm,
+    product_width_cm
+FROM olist_products;
 
 
+SELECT *
+FROM olist_order_payments
+LIMIT 10;
+
+DROP TABLE IF EXISTS order_payments_clean;
+
+CREATE TABLE order_payments_clean AS
+SELECT
+    TRIM(order_id) AS order_id,
+    payment_sequential,
+    LOWER(TRIM(payment_type)) AS payment_type,
+    payment_installments,
+    payment_value
+FROM olist_order_payments;
